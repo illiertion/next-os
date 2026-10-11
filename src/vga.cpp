@@ -41,15 +41,21 @@ namespace vga {
     uint8 code = keyboard::keyboard_read();
 
     // Shift 키 상태 업데이트
-    if(code == 0x36 || code == 0x2A)
-    {
-        keyboard::shift_pressed = true;
-        return;
+    if(code == 0x2A)
+    { 
+        keyboard::left_shift_pressed = true;
     }
-    else if(code == 0xB6 || code == 0xAA)
+    else if(code == 0x36)
     {
-        keyboard::shift_pressed = false;
-        return;
+        keyboard::right_shift_pressed = true;
+    }
+    else if(code == 0xAA)
+    {
+        keyboard::left_shift_pressed = false;
+    }
+    else if(code == 0xB6)
+    {
+        keyboard::right_shift_pressed = false;
     }
 
     // caps 키 상태 업데이트

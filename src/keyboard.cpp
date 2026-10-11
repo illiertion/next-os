@@ -3,11 +3,12 @@
 namespace keyboard {
 
     bool num_lock = false;
-    bool shift_pressed;
-    bool ctrl_pressed;
-    bool alt_pressed;
-    bool caps_lock;
-    bool extended;
+    bool left_shift_pressed = false;
+    bool right_shift_pressed = false;
+    bool ctrl_pressed = false;
+    bool alt_pressed = false;
+    bool caps_lock = false;
+    bool extended = false;
 
     char numpad_table[256];
     char key_table[256];
@@ -67,6 +68,10 @@ namespace keyboard {
         key_table[0x35] = '/';
         key_table[0x29] = '`';
         key_table[0x39] = ' ';
+        key_table[0x53] = '.';
+        key_table[0x4E] = '+';
+        key_table[0x4A] = '-';
+        key_table[0x37] = '*';
 
         // numpad_table
         numpad_table[0x52] = '0';
@@ -79,10 +84,6 @@ namespace keyboard {
         numpad_table[0x47] = '7';
         numpad_table[0x48] = '8';
         numpad_table[0x49] = '9';
-        numpad_table[0x53] = '.';
-        numpad_table[0x4E] = '+';
-        numpad_table[0x4A] = '-';
-        numpad_table[0x37] = '*';
 
         // upper_key_table
         upper_key_table[0x1E] = 'A';
@@ -231,7 +232,7 @@ namespace keyboard {
             // 문자 처리
             if(caps_lock)
             {
-                if(shift_pressed)
+                if(left_shift_pressed || right_shift_pressed)
                 {
                     return key_;
                 }
@@ -242,7 +243,7 @@ namespace keyboard {
             }
             else
             {
-                if(shift_pressed)
+                if(left_shift_pressed || right_shift_pressed)
                 {
                     return upper_key_table[key];
                 }
@@ -255,7 +256,7 @@ namespace keyboard {
         else
         {
             // 숫자 / 기호 → Shift만 처리
-            if(shift_pressed)
+            if(left_shift_pressed || right_shift_pressed)
             {
                 return upper_key_table[key];
             }

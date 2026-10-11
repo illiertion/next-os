@@ -10,7 +10,8 @@ namespace keyboard {
   char keyboard_key_table(uint8 key);
   void keyboard_set_leds();
 
-  extern bool shift_pressed;
+  extern bool left_shift_pressed;
+  extern bool right_shift_pressed;
   extern bool ctrl_pressed;
   extern  bool alt_pressed;
   extern bool caps_lock;
