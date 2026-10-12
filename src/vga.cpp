@@ -23,7 +23,7 @@ namespace vga {
     //vga에 쓰기
     for (uint32 i = 0; i < length; i++)
     {
-      vga[cursor] = (text[i] | (bgcolor | txcolor << 8));
+      vga[cursor] = text[i] | (((bgcolor << 4) | txcolor) << 8);
       cursor++;
     }
   } 
@@ -31,7 +31,7 @@ namespace vga {
    // vga 처리, 문자
   void vga_print(char text, uint16 txcolor, uint16 bgcolor) //txcolor: 텍스트 색, bgcolor: 배경 색; 기본 값: txcolor = 0x7, bgcolor = 0x0
   {
-      vga[cursor] = (text | (bgcolor | txcolor << 8));
+      text | (((bgcolor << 4) | txcolor) << 8);
       cursor++;
   } 
 
