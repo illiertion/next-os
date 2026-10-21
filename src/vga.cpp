@@ -25,14 +25,16 @@ namespace vga {
     {
       vga[cursor] = text[i] | (((bgcolor << 4) | txcolor) << 8);
       cursor++;
+      vga_update_cursor();
     }
   } 
 
    // vga 처리, 문자
   void vga_print(char text, uint16 txcolor, uint16 bgcolor) //txcolor: 텍스트 색, bgcolor: 배경 색; 기본 값: txcolor = 0x7, bgcolor = 0x0
   {
-      text | (((bgcolor << 4) | txcolor) << 8);
+      vga[cursor] = text | (((bgcolor << 4) | txcolor) << 8);
       cursor++;
+      vga_update_cursor();
   } 
 
   // 키보드 처리
@@ -100,6 +102,16 @@ namespace vga {
     }
 
     vga_print(key);
+    }
+
+    // bool wtf = true;
+    void vga_update_cursor()
+    {
+        keyboard::outb(0x3D4, 0x0F);
+        keyboard::outb(0x3D5, cursor & 0xFF);
+
+        keyboard::outb(0x3D4, 0x0E);
+        keyboard::outb(0x3D5, (cursor >> 8) & 0xFF);
     }
 }
 

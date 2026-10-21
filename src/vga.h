@@ -11,4 +11,5 @@ namespace vga {
   void vga_print(const char* text, uint16 txcolor = 0x7, uint16 bgcolor = 0x0); // 문자열 처리
   void vga_print(char text, uint16 txcolor = 0x7, uint16 bgcolor = 0x0); // 문자 처리
   void Keyboard_handling();
+  void vga_update_cursor();
 }
