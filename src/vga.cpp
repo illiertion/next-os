@@ -90,9 +90,18 @@ namespace vga {
             cursor--;
             vga_print(' ');
             cursor--;
+            vga_update_cursor();
             return;
         }
     }
+
+    // 엔터 처리
+    if(code == 0x1C)
+    {
+        cursor = ((cursor / 80) + 1) * 80;
+        vga_update_cursor();
+        return;
+    }   
 
     char key = keyboard::keyboard_key_table(code);
 
@@ -104,13 +113,20 @@ namespace vga {
     vga_print(key);
     }
 
-    // bool wtf = true;
+    // VGA 하드웨어 커서 위치 갱신 함수
+    // 아니, ai가 짜줬는데 못알아 먹겟어요!!ㅠㅠ
     void vga_update_cursor()
     {
+        // VGA 커서 제어 레지스터 선택 포트(0x3D4)에 하위 8비트 선택 번호(0x0F) 전달
         keyboard::outb(0x3D4, 0x0F);
+
+        // 현재 cursor 위치에서 하위 8비트만 추출하여 데이터 포트(0x3D5)에 전달
         keyboard::outb(0x3D5, cursor & 0xFF);
 
+        // VGA 커서 제어 레지스터 선택 포트(0x3D4)에 상위 8비트 선택 번호(0x0E) 전달
         keyboard::outb(0x3D4, 0x0E);
+
+        // 현재 cursor를 오른쪽으로 8비트 이동한 뒤 하위 8비트만 추출하여 전달
         keyboard::outb(0x3D5, (cursor >> 8) & 0xFF);
     }
 }
