@@ -37,10 +37,44 @@ namespace vga {
       vga_update_cursor();
   } 
 
+    // 키보드 E0 확장키 처리
+    void Keyboard_extended_handling(uint8 code)
+    {
+        // 딜리트 처리
+        if(code == 0x53)
+        {
+            if(cursor >= 80 * 25)
+            {
+                return; 
+            }
+            for(uint16 i = cursor; i < 80 * 25 - 1; i++)
+            {
+                vga[i] = vga[i + 1];
+            }
+
+            vga[80 * 25 - 1] = ' ' | (0x07 << 8); // 마지막 줄을 공백으로 채움
+            vga_update_cursor();
+            return;
+        }
+    }
+
   // 키보드 처리
   void Keyboard_handling()
   {
     uint8 code = keyboard::keyboard_read();
+
+    //E0 확장키 처리
+    if(code == 0xE0)
+    {
+        keyboard::extended = true;
+    }
+
+    if(keyboard::extended)
+    {
+        Keyboard_extended_handling(code);
+        keyboard::extended = false;
+        return;
+    }
 
     // Shift 키 상태 업데이트
     if(code == 0x2A)
@@ -101,7 +135,14 @@ namespace vga {
         cursor = ((cursor / 80) + 1) * 80;
         vga_update_cursor();
         return;
-    }   
+    }
+
+    // 탭 처리
+    if(code == 0x0F)
+    {
+        vga_print("    ");
+        return;
+    }
 
     char key = keyboard::keyboard_key_table(code);
 
@@ -113,8 +154,33 @@ namespace vga {
     vga_print(key);
     }
 
+    void vga_scroll()
+    {
+        if(cursor >= 80 * 25)
+        {
+            // 화면을 한 줄 위로 스크롤
+            //vga는 한 줄에 80개의 칸이 있음 => vga[i] = vga[i + 80]; 하면 1줄 밑으로
+            for(uint16 i = 0; i < 80 * 24; i++)
+            {
+                vga[i] = vga[i + 80];
+            }
+
+            // 마지막 줄을 공백으로 채움
+            for(uint16 i = 80 * 24; i < 80 * 25; i++)
+            {
+                vga[i] = ' ' | (0x07 << 8); // 기본 색상: 흰색 텍스트, 검은색 배경
+            }
+
+            // 커서를 마지막 줄의 시작 위치로 이동
+            cursor -= 80;
+
+            // 커서 위치 업데이트
+            vga_update_cursor();
+        }
+    }
+
     // VGA 하드웨어 커서 위치 갱신 함수
-    // 아니, ai가 짜줬는데 못알아 먹겟어요!!ㅠㅠ
+    // 아니, ai가 짜줬는데 못알아 먹겠어요!!ㅠㅠ
     void vga_update_cursor()
     {
         // VGA 커서 제어 레지스터 선택 포트(0x3D4)에 하위 8비트 선택 번호(0x0F) 전달
@@ -128,6 +194,9 @@ namespace vga {
 
         // 현재 cursor를 오른쪽으로 8비트 이동한 뒤 하위 8비트만 추출하여 전달
         keyboard::outb(0x3D5, (cursor >> 8) & 0xFF);
+
+        // 커서가 화면의 마지막 줄을 넘어가면 스크롤 처리
+        vga_scroll();
     }
 }
 
