@@ -1,6 +1,6 @@
-#include "keyboard.h"
-#include "types.h"
-#include "vga.h"
+#include "device/keyboard/keyboard.h"
+#include "common/types.h"
+#include "vga/vga.h"
   
 extern "C" void kernel_main()
 { 
@@ -10,7 +10,7 @@ extern "C" void kernel_main()
   while(true)
   {
     // 키보드 처리
-    vga::Keyboard_handling();
+    input::Keyboard_handling();
   }
 } // kernel_main
 

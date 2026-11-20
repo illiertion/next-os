@@ -2,13 +2,7 @@
 
 namespace keyboard {
 
-    bool num_lock = false;
-    bool left_shift_pressed = false;
-    bool right_shift_pressed = false;
-    bool ctrl_pressed = false;
-    bool alt_pressed = false;
-    bool caps_lock = false;
-    bool extended = false;
+
 
     char numpad_table[256];
     char key_table[256];
@@ -171,7 +165,7 @@ namespace keyboard {
 
         
         // 처음에는 Num Lock OFF
-        keyboard::num_lock = false;
+        input::num_lock = false;
         keyboard::keyboard_set_leds();
     }
 
@@ -214,12 +208,12 @@ namespace keyboard {
         // 넘패드 처리
         char key_ = numpad_table[key];
 
-        if(num_lock && key_ != 0)
+        if(input::num_lock && key_ != 0)
         {
             return key_;
         }
 
-        if(!num_lock && key_ != 0)
+        if(!input::num_lock && key_ != 0)
         {
             return 0;
         }
@@ -230,9 +224,9 @@ namespace keyboard {
         if(key_ >= 'a' && key_ <= 'z')
         {
             // 문자 처리
-            if(caps_lock)
+            if(input::caps_lock)
             {
-                if(left_shift_pressed || right_shift_pressed)
+                if(input::shift_pressed)
                 {
                     return key_;
                 }
@@ -243,7 +237,7 @@ namespace keyboard {
             }
             else
             {
-                if(left_shift_pressed || right_shift_pressed)
+                if(input::shift_pressed)
                 {
                     return upper_key_table[key];
                 }
@@ -256,7 +250,7 @@ namespace keyboard {
         else
         {
             // 숫자 / 기호 → Shift만 처리
-            if(left_shift_pressed || right_shift_pressed)
+            if(input::shift_pressed)
             {
                 return upper_key_table[key];
             }
@@ -311,12 +305,12 @@ namespace keyboard {
         }
 
         // LED 상태 설정
-        if(num_lock)
+        if(input::num_lock)
         {
             led |= 0x02;
         }
 
-        if(caps_lock)
+        if(input::caps_lock)
         {
             led |= 0x04;
         }

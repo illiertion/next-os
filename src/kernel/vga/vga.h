@@ -1,6 +1,7 @@
 #pragma once
-#include "types.h"
-#include "keyboard.h"
+#include "common/types.h"
+#include "device/keyboard/keyboard.h"
+#include "input/input.h"
 
 namespace vga {
   //<변수 선언>
